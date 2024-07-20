@@ -1,0 +1,13 @@
+paypal:
+  client-id: Abb6FbBc0xolDAxyh7i2WeTHpCcIgTK4hN2NgFyyVxbRbs8FjOO8UM0AE6uBoIhUy3WmPG_mHsAlxf6b
+  client-secret: EJqoIjF64JUMRonuSBdc0WSkRjlUoKRa_GZA96YPjdI1phmNTPFGCsdftRdyuEQy0b9DJP8fsWJpvD-W
+  mode: sandbox
+
+store:
+  url:
+    web:
+      success: http://localhost:8080/web/payment/success
+      cancel: http://localhost:8080/web/payment/cancel
+    api:
+      success: http://localhost:5173/payment/success
+      cancel: http://localhost:5173/payment/cancel
