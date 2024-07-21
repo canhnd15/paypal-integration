@@ -1,16 +1,8 @@
 # Integrate PayPal payment in application built with Spring Boot and ReactJS.
 
-## 1. How it works?
+### 1. Flow:
+![Alt text](flow.png 'flow')
 
-We have a frontend (web application) developed with ReactJS which using to send requests to our backend application developed with Spring Boot. 
+### 2. How to setup
 
-### APIs:
-- {baseUrl}/api/v1/payment/create : For creating payment request.
-- {baseUrl}/api/v1/payment/execute : For executing payment request.
-
-### Flow:
-![Alt text](paypal-integration.png 'flow')
-
-## 2. Backend (Spring Boot)
-
-## 3. Frontend (ReactJS)
+You can follow this tutorial [https://davidnguyenblog.vercel.app/blog/paypal-integration-spring-boo-reactjs](https://davidnguyenblog.vercel.app/blog/paypal-integration-spring-boo-reactjs) on my blog 
