@@ -38,7 +38,7 @@ public class PaypalService {
     @Value("${store.url.api.cancel}")
     private String API_CANCEL_URL;
 
-    public ResponseEntity<PaymentResponse<?>> createPayment(PaymentCreateReq req, String type)
+    public ResponseEntity<PaymentResponse<?>> create(PaymentCreateReq req, String type)
             throws PayPalRESTException {
         Amount amount = new Amount();
         amount.setCurrency(req.getCurrency());
@@ -69,47 +69,47 @@ public class PaypalService {
                 .build());
     }
 
-    private Payment getPayment(PaymentCreateReq req, String type, List<Transaction> transactions) {
-        Payer payer = new Payer();
-        payer.setPaymentMethod(req.getMethod());
+private Payment getPayment(PaymentCreateReq req, String type, List<Transaction> transactions) {
+    Payer payer = new Payer();
+    payer.setPaymentMethod(req.getMethod());
 
-        RedirectUrls redirectUrls = new RedirectUrls();
-        if (PaymentConst.TYPE_WEB.equals(type)) {
-            redirectUrls.setCancelUrl(WEB_CANCEL_URL);
-            redirectUrls.setReturnUrl(WEB_SUCCESS_URL);
-        } else {
-            redirectUrls.setCancelUrl(API_CANCEL_URL);
-            redirectUrls.setReturnUrl(API_SUCCESS_URL);
-        }
-
-        Payment payment = new Payment();
-        payment.setIntent(PaymentConst.INTENT_SALE);
-        payment.setPayer(payer);
-        payment.setTransactions(transactions);
-        payment.setRedirectUrls(redirectUrls);
-        return payment;
+    RedirectUrls redirectUrls = new RedirectUrls();
+    if (PaymentConst.TYPE_WEB.equals(type)) {
+        redirectUrls.setCancelUrl(WEB_CANCEL_URL);
+        redirectUrls.setReturnUrl(WEB_SUCCESS_URL);
+    } else {
+        redirectUrls.setCancelUrl(API_CANCEL_URL);
+        redirectUrls.setReturnUrl(API_SUCCESS_URL);
     }
 
-    public ResponseEntity<PaymentResponse<?>> executePayment(PaymentExecuteReq req) throws PayPalRESTException {
-        Payment payment = new Payment();
-        payment.setId(req.getPaymentId());
+    Payment payment = new Payment();
+    payment.setIntent(PaymentConst.INTENT_SALE);
+    payment.setPayer(payer);
+    payment.setTransactions(transactions);
+    payment.setRedirectUrls(redirectUrls);
+    return payment;
+}
 
-        PaymentExecution paymentExecution = new PaymentExecution();
-        paymentExecution.setPayerId(req.getPayerId());
+public ResponseEntity<PaymentResponse<?>> execute(PaymentExecuteReq req) throws PayPalRESTException {
+    Payment payment = new Payment();
+    payment.setId(req.getPaymentId());
 
-        payment = payment.execute(apiContext, paymentExecution);
-        LOGGER.info("State of executed payment {} is {}", payment.getId(), payment.getState());
+    PaymentExecution paymentExecution = new PaymentExecution();
+    paymentExecution.setPayerId(req.getPayerId());
 
-        PaymentExecuteRespBody respBody = PaymentExecuteRespBody.builder()
-                .id(payment.getId())
-                .state(payment.getState())
-                .fullName(payment.getPayer().getPayerInfo().getFirstName().concat(" ").concat(payment.getPayer().getPayerInfo().getLastName()))
-                .email(payment.getPayer().getPayerInfo().getEmail())
-                .build();
+    payment = payment.execute(apiContext, paymentExecution);
+    LOGGER.info("State of executed payment {} is {}", payment.getId(), payment.getState());
 
-        return ResponseEntity.ok(PaymentResponse.builder()
-                .code(PaymentRespCode.SUCCESS)
-                .data(respBody)
-                .build());
-    }
+    PaymentExecuteRespBody respBody = PaymentExecuteRespBody.builder()
+            .id(payment.getId())
+            .state(payment.getState())
+            .fullName(payment.getPayer().getPayerInfo().getFirstName().concat(" ").concat(payment.getPayer().getPayerInfo().getLastName()))
+            .email(payment.getPayer().getPayerInfo().getEmail())
+            .build();
+
+    return ResponseEntity.ok(PaymentResponse.builder()
+            .code(PaymentRespCode.SUCCESS)
+            .data(respBody)
+            .build());
+}
 }

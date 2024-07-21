@@ -15,24 +15,24 @@ function SuccessPage() {
     const [paymentId] = useState(searchParams.get("paymentId"));
     const [payerId] = useState(searchParams.get("PayerID"));
 
-    useEffect(() => {
-        const reqData = {
-            paymentId: paymentId,
-            payerId: payerId
-        };
+useEffect(() => {
+    const reqData = {
+        paymentId: paymentId,
+        payerId: payerId
+    };
 
-        const sendPostRequest = async () => {
-            try {
-                const res = await axios.post('http://localhost:8080/api/v1/payment/execute', reqData);
-                setResponse(res.data);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        sendPostRequest();
-    }, [paymentId, payerId]);
+    const sendPostRequest = async () => {
+        try {
+            const res = await axios.post('http://localhost:8080/api/v1/payment/execute', reqData);
+            setResponse(res.data);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    sendPostRequest();
+}, [paymentId, payerId]);
 
     const redirectToPaymentPage = () => {
         navigate("/")

@@ -21,26 +21,12 @@ public class PaypalRestController {
     @PostMapping("/payment/create")
     public ResponseEntity<PaymentResponse<?>> createPayment(@RequestBody PaymentCreateReq createReq)
             throws PayPalRESTException {
-        return paypalService.createPayment(createReq, PaymentConst.TYPE_API);
+        return paypalService.create(createReq, PaymentConst.TYPE_API);
     }
 
     @PostMapping("/payment/execute")
     public ResponseEntity<PaymentResponse<?>> paymentSuccess(@RequestBody PaymentExecuteReq executionReq)
             throws PayPalRESTException {
-        return paypalService.executePayment(executionReq);
+        return paypalService.execute(executionReq);
     }
-
-//    @GetMapping("/payment/cancel")
-//    public ResponseEntity<PaymentResponse<?>> paymentCancel() {
-//        return ResponseEntity.ok(PaymentResponse.builder()
-//                .code(PaymentRespCode.SUCCESS)
-//                .build());
-//    }
-//
-//    @GetMapping("/payment/error")
-//    public ResponseEntity<PaymentResponse<?>> paymentError() {
-//        return ResponseEntity.ok(PaymentResponse.builder()
-//                .code(PaymentRespCode.FAIL)
-//                .build());
-//    }
 }

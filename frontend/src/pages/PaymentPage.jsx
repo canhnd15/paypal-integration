@@ -1,4 +1,4 @@
-import {set, useForm} from "react-hook-form";
+import {useForm} from "react-hook-form";
 import Form from "../components/Form.jsx";
 import FormRow from "../components/StyledFormRow.jsx";
 import Input from "../components/Input.jsx";
@@ -17,31 +17,31 @@ function PaymentPage() {
     const [isShowSpinner, setIsShowSpinner] = useState(false);
     const {register, handleSubmit, formState: {errors}} = useForm();
 
-    const onSubmit = async (data) => {
-        try {
-            const response = await fetch('http://localhost:8080/api/v1/payment/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
+const onSubmit = async (data) => {
+    try {
+        const response = await fetch('http://localhost:8080/api/v1/payment/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
 
-            if (response.ok) {
-                const result = await response.json();
-                let linkHref = "";
-                result?.data?.links.map((link) => {
-                    if (link.rel === 'approval_url') linkHref = link.href;
-                    setIsLoading(true);
-                });
-                window.open(linkHref, '_self', 'noopener,noreferrer');
-            } else {
-                console.error('Error:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error:', error);
+        if (response.ok) {
+            const result = await response.json();
+            let linkHref = "";
+            result?.data?.links.map((link) => {
+                if (link.rel === 'approval_url') linkHref = link.href;
+                setIsLoading(true);
+            });
+            window.open(linkHref, '_self', 'noopener,noreferrer');
+        } else {
+            console.error('Error:', response.statusText);
         }
-    };
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
 
     const handleClick = () => {
         setIsShowSpinner(true);
