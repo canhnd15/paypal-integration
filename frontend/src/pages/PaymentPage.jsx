@@ -1,22 +1,20 @@
-import {useForm} from "react-hook-form";
+import {set, useForm} from "react-hook-form";
 import Form from "../components/Form.jsx";
 import FormRow from "../components/StyledFormRow.jsx";
 import Input from "../components/Input.jsx";
 import Button from "../components/Button.jsx";
 import styled from "styled-components";
-
-const Container = styled.div`
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
-`
+import {useState} from "react";
+import Spinner from "../components/Spinner.jsx";
+import Container from "../components/Container.jsx";
 
 const Heading = styled.h1`
     padding-bottom: 30px;
 `
 
 function PaymentPage() {
+    const [isLoading, setIsLoading] = useState(false);
+    const [isShowSpinner, setIsShowSpinner] = useState(false);
     const {register, handleSubmit, formState: {errors}} = useForm();
 
     const onSubmit = async (data) => {
@@ -34,8 +32,9 @@ function PaymentPage() {
                 let linkHref = "";
                 result?.data?.links.map((link) => {
                     if (link.rel === 'approval_url') linkHref = link.href;
+                    setIsLoading(true);
                 });
-                window.open(linkHref, '_blank', 'noopener,noreferrer');
+                window.open(linkHref, '_self', 'noopener,noreferrer');
             } else {
                 console.error('Error:', response.statusText);
             }
@@ -44,65 +43,71 @@ function PaymentPage() {
         }
     };
 
+    const handleClick = () => {
+        setIsShowSpinner(true);
+    }
+
     return (
         <Container>
-            <Heading>David Store</Heading>
-            <Form onSubmit={handleSubmit(onSubmit)}>
-                <FormRow
-                    label={"Payment method"}
-                    isRequired={true}
-                    error={errors?.method?.message}
-                >
-                    <Input
-                        type="text"
-                        id="method"
-                        defaultValue={"Paypal"}
-                        {...register('method', {required: 'Payment method is required'})}
-                    />
-                </FormRow>
+            {
+                isLoading && isShowSpinner ? <Spinner/> : <> <Heading>David Store</Heading>
+                    <Form onSubmit={handleSubmit(onSubmit)}>
+                        <FormRow
+                            label={"Payment method"}
+                            isRequired={true}
+                            error={errors?.method?.message}
+                        >
+                            <Input
+                                type="text"
+                                id="method"
+                                defaultValue={"Paypal"}
+                                {...register('method', {required: 'Payment method is required'})}
+                            />
+                        </FormRow>
 
-                <FormRow
-                    label={"Total amount"}
-                    isRequired={true}
-                    error={errors?.amount?.message}
-                >
-                    <Input
-                        type="text"
-                        id="total"
-                        defaultValue={"10.0"}
-                        {...register('total', {required: 'Total amount is required'})}
-                    />
-                </FormRow>
+                        <FormRow
+                            label={"Total amount"}
+                            isRequired={true}
+                            error={errors?.amount?.message}
+                        >
+                            <Input
+                                type="text"
+                                id="total"
+                                defaultValue={"10.0"}
+                                {...register('total', {required: 'Total amount is required'})}
+                            />
+                        </FormRow>
 
-                <FormRow
-                    label={"Currency"}
-                    isRequired={true}
-                    error={errors?.currency?.message}
-                >
-                    <Input
-                        type="text"
-                        id="currency"
-                        defaultValue={"USD"}
-                        {...register('currency', {required: 'Currency is required'})}
-                    />
-                </FormRow>
+                        <FormRow
+                            label={"Currency"}
+                            isRequired={true}
+                            error={errors?.currency?.message}
+                        >
+                            <Input
+                                type="text"
+                                id="currency"
+                                defaultValue={"USD"}
+                                {...register('currency', {required: 'Currency is required'})}
+                            />
+                        </FormRow>
 
-                <FormRow
-                    label={"Description"}
-                    isRequired={true}
-                    error={errors?.description?.message}
-                >
-                    <Input
-                        type="text"
-                        id="description"
-                        defaultValue={"Ip15 promax from David"}
-                        {...register('description', {required: 'Description is required'})}
-                    />
-                </FormRow>
-                <FormRow>
-                    <Button type={"submit"}>Pay with PayPal</Button>
-                </FormRow>
-            </Form>
+                        <FormRow
+                            label={"Description"}
+                            isRequired={true}
+                            error={errors?.description?.message}
+                        >
+                            <Input
+                                type="text"
+                                id="description"
+                                defaultValue={"Ip15 promax from David"}
+                                {...register('description', {required: 'Description is required'})}
+                            />
+                        </FormRow>
+                        <FormRow>
+                            <Button disabled={isLoading} onClick={handleClick} type={"submit"}>Pay with PayPal</Button>
+                        </FormRow>
+                    </Form> </>
+            }
         </Container>
     )
 }

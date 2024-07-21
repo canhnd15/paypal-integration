@@ -44,7 +44,7 @@ public class PaypalController {
                     .build();
 
             ResponseEntity<PaymentResponse<?>> resp = paypalService.createPayment(paymentRequest, PaymentConst.TYPE_WEB);
-            PaymentRespBody body = (PaymentRespBody) Objects.requireNonNull(resp.getBody()).getData();
+            PaymentCreateRespBody body = (PaymentCreateRespBody) Objects.requireNonNull(resp.getBody()).getData();
 
             if(Objects.nonNull(body) && Objects.nonNull(body.getLinks())){
                 for (Links link: body.getLinks()) {
@@ -71,7 +71,7 @@ public class PaypalController {
                     .build();
 
             ResponseEntity<PaymentResponse<?>> resp = paypalService.executePayment(executeReq);
-            PaymentRespBody body = (PaymentRespBody) Objects.requireNonNull(resp.getBody()).getData();
+            PaymentCreateRespBody body = (PaymentCreateRespBody) Objects.requireNonNull(resp.getBody()).getData();
 
             if (Objects.nonNull(body.getState()) && PaymentRespCode.APPROVED.equals(body.getState())) {
                 return "paymentSuccess";

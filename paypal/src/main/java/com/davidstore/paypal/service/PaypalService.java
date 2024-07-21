@@ -7,6 +7,7 @@ import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +56,7 @@ public class PaypalService {
         payment = payment.create(apiContext);
         LOGGER.info("State of created payment {} is {}", payment.getId(), payment.getState());
 
-        PaymentRespBody respBody = PaymentRespBody.builder()
+        PaymentCreateRespBody respBody = PaymentCreateRespBody.builder()
                 .id(payment.getId())
                 .state(payment.getState())
                 .links(payment.getLinks())
@@ -98,11 +100,11 @@ public class PaypalService {
         payment = payment.execute(apiContext, paymentExecution);
         LOGGER.info("State of executed payment {} is {}", payment.getId(), payment.getState());
 
-        PaymentRespBody respBody = PaymentRespBody.builder()
+        PaymentExecuteRespBody respBody = PaymentExecuteRespBody.builder()
                 .id(payment.getId())
                 .state(payment.getState())
-                .links(payment.getLinks())
-                .payer(payment.getPayer())
+                .fullName(payment.getPayer().getPayerInfo().getFirstName().concat(" ").concat(payment.getPayer().getPayerInfo().getLastName()))
+                .email(payment.getPayer().getPayerInfo().getEmail())
                 .build();
 
         return ResponseEntity.ok(PaymentResponse.builder()

@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class PaymentRespBody {
+public class PaymentCreateRespBody {
     private String id;
     private String state;
     private List<Links> links;

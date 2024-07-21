@@ -1,9 +1,12 @@
 import Button from "../components/Button.jsx";
-import {useSearchParams} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
+import Container from "../components/Container.jsx";
+import DisplayInfo from "../components/DisplayInfo.jsx";
 
 function SuccessPage() {
+    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [response, setResponse] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -18,8 +21,6 @@ function SuccessPage() {
             payerId: payerId
         };
 
-        console.log(reqData);
-
         const sendPostRequest = async () => {
             try {
                 const res = await axios.post('http://localhost:8080/api/v1/payment/execute', reqData);
@@ -33,12 +34,25 @@ function SuccessPage() {
         sendPostRequest();
     }, [paymentId, payerId]);
 
+    const redirectToPaymentPage = () => {
+        navigate("/")
+    }
+
     return <>
-        {
-            isLoading ? <h1>Payment is executing...</h1> : (response ? <h1>Payment is made successfully!</h1> : <h1>Payment is fail!</h1>)
-        }
-        <Button disabled={isLoading}>Back to homepage</Button>
-        <h2>{error ? "Error: " + error : ""}</h2>
+        <Container>
+            {
+                isLoading ? <h1>Payment is executing...</h1> : (response !== null ?
+                    <div>
+                        <h1>Payment is made successfully!</h1>
+                        <DisplayInfo label={"Payment ID:"} value={response.data.id}/>
+                        <DisplayInfo label={"Payer's name:"} value={response.data.fullName}/>
+                        <DisplayInfo label={"Payer's email:"} value={response.data.email}/>
+                    </div>
+                    : <h1>Payment is fail!</h1>)
+            }
+            <p>{error ? "Error: " + error : ""}</p>
+            <Button onClick={redirectToPaymentPage}>Back to homepage</Button>
+        </Container>
     </>
 }
 
